@@ -1,4 +1,4 @@
-package jb.devel.tribe;
+package jb.wrk.tribe;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
