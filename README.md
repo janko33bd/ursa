@@ -29,9 +29,9 @@ docker-compose up --build
 
 ### Demo Credentials
 
-- **Username:** testuser | **Password:** demo123
-- **Username:** admin | **Password:** demo123  
-- **Username:** officer | **Password:** demo123
+- **Username:** testuser | **Password:** password123
+- **Username:** admin | **Password:** password123  
+- **Username:** officer | **Password:** password123
 
 ## Local Development
 
