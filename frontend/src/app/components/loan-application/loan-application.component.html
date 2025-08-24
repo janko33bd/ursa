@@ -1,0 +1,54 @@
+<div class="loan-application-container">
+  <div class="loan-card">
+    <h2>Loan Application</h2>
+    <div class="process-info">
+      <h3>Loan Approval Process</h3>
+      <div class="process-steps">
+        <div class="step">1. Document Validation</div>
+        <div class="step">2. Credit Score Check</div>
+        <div class="step">3. Auto Approve (Score ≥ 700) or Manual Review (Score < 700)</div>
+        <div class="step">4. Process Complete</div>
+      </div>
+    </div>
+
+    <form [formGroup]="loanForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="creditScore">Credit Score (300-850):</label>
+        <input
+          type="number"
+          id="creditScore"
+          formControlName="creditScore"
+          class="form-control"
+          min="300"
+          max="850"
+          [class.invalid]="loanForm.get('creditScore')?.invalid && loanForm.get('creditScore')?.touched"
+        />
+        <div *ngIf="loanForm.get('creditScore')?.invalid && loanForm.get('creditScore')?.touched" class="error">
+          <div *ngIf="loanForm.get('creditScore')?.errors?.['required']">Credit score is required</div>
+          <div *ngIf="loanForm.get('creditScore')?.errors?.['min'] || loanForm.get('creditScore')?.errors?.['max']">
+            Credit score must be between 300 and 850
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="error" class="error">{{ error }}</div>
+      
+      <button type="submit" [disabled]="loading || loanForm.invalid" class="btn btn-primary">
+        {{ loading ? 'Starting Process...' : 'Start Loan Process' }}
+      </button>
+    </form>
+
+    <div *ngIf="processResult" class="result-card">
+      <h3>Process Started Successfully!</h3>
+      <div class="result-details">
+        <p><strong>Process Instance ID:</strong> {{ processResult.processInstanceKey }}</p>
+        <p><strong>Process ID:</strong> {{ processResult.bpmnProcessId }}</p>
+        <p><strong>Version:</strong> {{ processResult.version }}</p>
+        <p><strong>Credit Score:</strong> {{ processResult.variables?.creditScore || 'Not provided' }}</p>
+        <div class="status-info">
+          <strong>Status:</strong> {{ getProcessStatus() }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

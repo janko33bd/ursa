@@ -1,0 +1,33 @@
+{
+  "name": "tribe-docker-e2e-tests",
+  "version": "1.0.0",
+  "description": "End-to-end tests for Tribe application Docker containers",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test --config=playwright.config.docker.js",
+    "test:headed": "playwright test --config=playwright.config.docker.js --headed",
+    "test:debug": "playwright test --config=playwright.config.docker.js --debug",
+    "test:ui": "playwright test --config=playwright.config.docker.js --ui",
+    "install-browsers": "playwright install chromium",
+    "docker:up": "docker-compose -f docker-compose.test.yml up -d --build",
+    "docker:down": "docker-compose -f docker-compose.test.yml down -v",
+    "docker:logs": "docker-compose -f docker-compose.test.yml logs",
+    "docker:test": "npm run docker:down && npm run docker:up && sleep 30 && npm run test && npm run docker:down"
+  },
+  "keywords": [
+    "e2e",
+    "testing",
+    "docker",
+    "playwright",
+    "camunda",
+    "angular"
+  ],
+  "author": "Claude Code",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.55.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

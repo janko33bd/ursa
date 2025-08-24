@@ -1,0 +1,37 @@
+<nav class="navbar" *ngIf="isAuthenticated()">
+  <div class="nav-brand">
+    <h3>Tribe Loan Application</h3>
+  </div>
+  <div class="nav-menu">
+    <span class="welcome-text">Welcome, {{ getCurrentUsername() }}!</span>
+    <button class="btn btn-outline" (click)="logout()">Logout</button>
+  </div>
+</nav>
+
+<main class="main-content">
+  <router-outlet />
+  
+  <!-- Landing page when not authenticated and not on login page -->
+  <div *ngIf="!isAuthenticated() && !isLoginPage()" class="landing-page">
+    <div class="hero-section">
+      <h1>Tribe Loan Application System</h1>
+      <p>Secure loan processing with Camunda 8 workflow automation</p>
+      <button class="btn btn-primary btn-large" (click)="navigateToLogin()">Login to Continue</button>
+    </div>
+    
+    <div class="features">
+      <div class="feature-card">
+        <h3>🔐 Secure Authentication</h3>
+        <p>JWT-based authentication with Spring Security</p>
+      </div>
+      <div class="feature-card">
+        <h3>⚡ Automated Processing</h3>
+        <p>Credit scores ≥700 auto-approved, others reviewed</p>
+      </div>
+      <div class="feature-card">
+        <h3>📊 Process Tracking</h3>
+        <p>Real-time workflow status with Camunda 8</p>
+      </div>
+    </div>
+  </div>
+</main>

@@ -1,0 +1,39 @@
+# Multi-stage build for Spring Boot application
+FROM gradle:8.5-jdk17 AS build
+
+WORKDIR /app
+
+# Copy gradle files first for better caching
+COPY tribe/build.gradle.kts tribe/settings.gradle.kts tribe/gradlew ./
+COPY tribe/gradle ./gradle
+
+# Copy source code
+COPY tribe/src ./src
+
+# Build the application
+RUN ./gradlew build --no-daemon -x test
+
+# Runtime stage
+FROM eclipse-temurin:17-jre-alpine
+
+WORKDIR /app
+
+# Copy built jar from build stage
+COPY --from=build /app/build/libs/*.jar app.jar
+
+# Install curl for health check
+RUN apk add --no-cache curl
+
+# Create non-root user for security
+RUN addgroup -S spring && adduser -S -G spring spring
+USER spring
+
+# Expose port
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD curl -f http://localhost:8080/actuator/health || exit 1
+
+# Run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]

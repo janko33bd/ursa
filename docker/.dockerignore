@@ -1,0 +1,37 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+*.md
+docs/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Build artifacts
+tribe/build/
+tribe/.gradle/
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+
+# Test results
+tribe/build/reports/
+tribe/build/test-results/
+frontend/test-results/
+frontend/playwright-report/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS generated files
+.DS_Store
+Thumbs.db

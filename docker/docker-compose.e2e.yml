@@ -1,0 +1,83 @@
+services:
+  # Zeebe broker for BPMN process execution
+  zeebe:
+    image: camunda/zeebe:8.6.10
+    container_name: zeebe-broker
+    ports:
+      - "26500:26500"
+      - "9600:9600"  # Management/health API port
+    environment:
+      - ZEEBE_BROKER_NETWORK_HOST=0.0.0.0
+      - ZEEBE_BROKER_NETWORK_ADVERTISEDHOST=zeebe
+      - ZEEBE_BROKER_CLUSTER_NODEID=0
+      - ZEEBE_BROKER_CLUSTER_CLUSTERSIZE=1
+      - ZEEBE_BROKER_CLUSTER_REPLICATIONFACTOR=1
+      - ZEEBE_BROKER_CLUSTER_PARTITIONSCOUNT=1
+    volumes:
+      - zeebe-data:/usr/local/zeebe/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9600/actuator/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+
+  # Tribe backend with Zeebe integration
+  tribe:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.tribe
+    container_name: tribe-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=development
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:testdb
+      - SPRING_H2_CONSOLE_ENABLED=true
+      - CAMUNDA_CLIENT_ZEEBE_GATEWAY-URL=zeebe:26500
+      - CAMUNDA_CLIENT_ZEEBE_SECURITY_PLAINTEXT=true
+      - CAMUNDA_CLIENT_STARTUP_ENABLED=true
+      - LOGGING_LEVEL_ROOT=INFO
+      - LOGGING_LEVEL_JB_WRK_TRIBE=DEBUG
+      - SPRING_SQL_INIT_MODE=always
+      - SPRING_JPA_DEFER-DATASOURCE-INITIALIZATION=true
+      - JWT_SECRET=ZmFrZV9kZXYtc3VwZXJfc2VjcmV0X2Jhc2U2NA==
+    depends_on:
+      - zeebe
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 8
+      start_period: 90s
+    networks:
+      - app-network
+
+  # Frontend Angular application
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.frontend
+    container_name: tribe-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      tribe:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  zeebe-data:

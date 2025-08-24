@@ -1,0 +1,16 @@
+zeebe:
+  broker:
+    network:
+      host: 0.0.0.0
+      advertisedHost: zeebe
+    cluster:
+      initialContactPoints: [zeebe:26501]
+    exporters:
+      # Disable the default Elasticsearch exporter
+      elasticsearch:
+        enabled: false
+    gateway:
+      enable: true
+      network:
+        host: 0.0.0.0
+        port: 26500

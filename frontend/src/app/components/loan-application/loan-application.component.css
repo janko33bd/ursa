@@ -1,0 +1,76 @@
+.loan-application-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.loan-card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.loan-card h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.process-info {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  border-left: 4px solid #007bff;
+}
+
+.process-info h3 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.process-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.step {
+  color: #666;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 6px;
+  border-left: 3px solid #28a745;
+  font-weight: 500;
+}
+
+.result-card {
+  background: #e7f7e7;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+  border: 1px solid #28a745;
+}
+
+.result-card h3 {
+  color: #28a745;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.result-details p {
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.status-info {
+  background: white;
+  padding: 12px;
+  border-radius: 6px;
+  margin-top: 10px;
+  color: #007bff;
+  font-weight: 500;
+}

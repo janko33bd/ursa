@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:zeebe="http://camunda.org/schema/zeebe/1.0"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  targetNamespace="http://bpmn.io/schema/bpmn"
+                  id="loan-approval-process"
+                  exporter="Camunda Modeler"
+                  exporterVersion="5.0.0">
+  <bpmn:process id="loanApprovalProcess" name="Loan Approval Process" isExecutable="true">
+
+    <bpmn:startEvent id="StartEvent_1" name="Loan Application Submitted">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:serviceTask id="validateDocuments" name="Validate Documents">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="validate-docs" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="checkCreditScore" name="Check Credit Score">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="check-credit" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:exclusiveGateway id="Gateway_1" name="Credit Score Check">
+      <bpmn:incoming>Flow_3</bpmn:incoming>
+      <bpmn:outgoing>Flow_Auto_Approve</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Manual_Review</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:serviceTask id="autoApprove" name="Auto Approve">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="auto-approve" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Auto_Approve</bpmn:incoming>
+      <bpmn:outgoing>Flow_4</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:serviceTask id="manualReview" name="Manual Review">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="manual-review" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Manual_Review</bpmn:incoming>
+      <bpmn:outgoing>Flow_5</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:endEvent id="EndEvent_1" name="Process Complete">
+      <bpmn:incoming>Flow_4</bpmn:incoming>
+      <bpmn:incoming>Flow_5</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="validateDocuments"/>
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="validateDocuments" targetRef="checkCreditScore"/>
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="checkCreditScore" targetRef="Gateway_1"/>
+    <bpmn:sequenceFlow id="Flow_Auto_Approve" sourceRef="Gateway_1" targetRef="autoApprove">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= creditScore &gt;= 700</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Manual_Review" sourceRef="Gateway_1" targetRef="manualReview">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= creditScore &lt; 700</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_4" sourceRef="autoApprove" targetRef="EndEvent_1"/>
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="manualReview" targetRef="EndEvent_1"/>
+
+  </bpmn:process>
+</bpmn:definitions>
